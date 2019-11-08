@@ -2,6 +2,7 @@
   "variables": {
     "artifact_description": "CentOS 7.7 with kernel 5.x",
     "artifact_version": "7.7.1908",
+    "headless": "true",
     "image_name": "centos-7.7"
   },
 
@@ -16,7 +17,7 @@
       "guest_os_type": "RedHat_64",
       "http_directory": "http",
 
-      "iso_url": "http://mirror.yandex.ru/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso",
+      "iso_url": "https://mirror.umd.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso",
       "iso_checksum": "9a2c47d97b9975452f7d582264e9fc16d108ed8252ac6816239a3b58cef5c53d",
       "iso_checksum_type": "sha256",
 
@@ -26,6 +27,7 @@
 
       "shutdown_command": "sudo -S /sbin/halt -h -p",
       "shutdown_timeout" : "5m",
+      "headless": "{{user `headless`}}",
 
       "ssh_wait_timeout": "20m",
       "ssh_username": "vagrant",
