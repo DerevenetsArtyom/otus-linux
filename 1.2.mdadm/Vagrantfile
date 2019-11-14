@@ -61,12 +61,14 @@ Vagrant.configure("2") do |config|
                     end
                 end
             end
+            box.vm.provision "file", source: "create_raid_1.sh", destination: "~/create_raid_1.sh"
             box.vm.provision "shell", inline: <<-SHELL
                 mkdir -p ~root/.ssh
                 cp ~vagrant/.ssh/auth* ~root/.ssh
                 yum install -y mdadm smartmontools hdparm gdisk
+                chmod +x ~vagrant/create_raid_1.sh
+                sudo ~vagrant/create_raid_1.sh
             SHELL
-            box.vm.provision "file", source: "create_raid_1.sh", destination: "~/create_raid_1.sh"
         end
     end
 end
