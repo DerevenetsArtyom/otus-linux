@@ -53,6 +53,7 @@ Vagrant.configure("2") do |config|
           SHELL
         box.vm.provision "shell", path: "watchlog.sh"
         box.vm.provision "shell", path: "fcgi.sh"
+        box.vm.provision "shell", path: "httpd.sh"
   
         end
     end
