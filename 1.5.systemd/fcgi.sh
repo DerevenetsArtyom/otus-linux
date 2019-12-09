@@ -14,7 +14,7 @@ sed -i '/OPTIONS=/s/^#//g' /etc/sysconfig/spawn-fcgi
 ###################################
 #Copy prepared init file
 
-SRC=/vagrant/fcgi_file
+SRC=/vagrant/fcgi_data
 mv $SRC/spawn-fcgi.service /etc/systemd/system/
 
 ###################################

@@ -1,5 +1,13 @@
 # Homework #5. SystemD
 
+There are scripts automatically executed during provisioning:
+
+* `watchlog.sh` (uses `wachlog_data`)
+* `fcgi.sh` (uses `fcgi_data`)
+* `httpd.sh` (uses `httpd_data`)
+
+Below there are instructions how to do such things manually step-by-step.
+
 ## 1. Write the service
 
 _Write the service, which will monitor the log every 30 seconds for the presence of the keyword.  
