@@ -1,3 +1,5 @@
+# Homework #5. SystemD
+
 ## 1. Write the service
 
 _Write the service, which will monitor the log every 30 seconds for the presence of the keyword.  
@@ -197,4 +199,113 @@ Check:
 
 Dec 09 20:14:54 lvm systemd[1]: Started Spawn-fcgi startup service by Otus.
 Dec 09 20:14:54 lvm systemd[1]: Starting Spawn-fcgi startup service by Otus...
+```
+
+
+## 3. Extend unit-file `apache httpd`
+
+_Add the `apache httpd` unit file with the ability to run multiple instances of the server with different configurations_  
+
+Copy the unit-file and make a template out of it:
+```
+[root@lvm system]# cp /usr/lib/systemd/system/httpd.service /etc/systemd/system/httpd@.service
+
+[root@lvm system]# vi /etc/systemd/system/httpd.service
+[root@lvm system]# cat /etc/systemd/system/httpd.service
+[Unit]
+Description=The Apache HTTP Server
+After=network.target remote-fs.target nss-lookup.target
+Documentation=man:httpd(8)
+Documentation=man:apachectl(8)
+
+[Service]
+Type=notify
+EnvironmentFile=/etc/sysconfig/httpd-%I
+ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND
+ExecReload=/usr/sbin/httpd $OPTIONS -k graceful
+ExecStop=/bin/kill -WINCH ${MAINPID}
+KillSignal=SIGCONT
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Create config files for running two web server instances:
+```
+[root@lvm system]# vi /etc/sysconfig/httpd-first
+[root@lvm system]# cat /etc/sysconfig/httpd-first
+OPTIONS=-f conf/first.conf
+
+[root@lvm system]# vi /etc/sysconfig/httpd-second
+[root@lvm system]# cat /etc/sysconfig/httpd-second
+OPTIONS=-f conf/second.conf
+
+[root@lvm system]# cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/first.conf
+[root@lvm system]# cp /etc/httpd/conf/httpd.conf /etc/httpd/conf/second.conf
+```
+
+Modify second config file to setup unique values:
+```
+[root@lvm system]# vi /etc/httpd/conf/second.conf
+[root@lvm system]# cat /etc/httpd/conf/second.conf | grep -Ev ^#
+...
+Listen 8080
+PidFile /var/run/httpd-second.pid
+...
+```
+
+Check:
+```
+[root@lvm system]# systemctl start httpd@first
+[root@lvm system]# systemctl status httpd@first
+● httpd@first.service - The Apache HTTP Server
+   Loaded: loaded (/etc/systemd/system/httpd@.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2019-12-09 21:09:44 UTC; 14min ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+ Main PID: 5205 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/system-httpd.slice/httpd@first.service
+           ├─5205 /usr/sbin/httpd -DFOREGROUND
+           ├─5206 /usr/sbin/httpd -DFOREGROUND
+           ├─5207 /usr/sbin/httpd -DFOREGROUND
+           ├─5208 /usr/sbin/httpd -DFOREGROUND
+           ├─5209 /usr/sbin/httpd -DFOREGROUND
+           ├─5210 /usr/sbin/httpd -DFOREGROUND
+           └─5211 /usr/sbin/httpd -DFOREGROUND
+
+Dec 09 21:09:44 lvm systemd[1]: Starting The Apache HTTP Server...
+Dec 09 21:09:44 lvm httpd[5205]: AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1. Set the 'ServerName' directive globall... this message
+Dec 09 21:09:44 lvm systemd[1]: Started The Apache HTTP Server.
+Hint: Some lines were ellipsized, use -l to show in full.
+
+
+[root@lvm system]# systemctl start httpd@second
+[root@lvm system]# systemctl status httpd@second
+● httpd@second.service - The Apache HTTP Server
+   Loaded: loaded (/etc/systemd/system/httpd@.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2019-12-09 21:21:20 UTC; 2min 59s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+ Main PID: 5391 (httpd)
+   Status: "Total requests: 0; Current requests/sec: 0; Current traffic:   0 B/sec"
+   CGroup: /system.slice/system-httpd.slice/httpd@second.service
+           ├─5391 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           ├─5392 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           ├─5393 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           ├─5394 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           ├─5395 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           ├─5396 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+           └─5397 /usr/sbin/httpd -f conf/second.conf -DFOREGROUND
+
+Dec 09 21:21:20 lvm systemd[1]: Starting The Apache HTTP Server...
+Dec 09 21:21:20 lvm httpd[5391]: AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1. Set the 'ServerName' directive globall... this message
+Dec 09 21:21:20 lvm systemd[1]: Started The Apache HTTP Server.
+Hint: Some lines were ellipsized, use -l to show in full.
+
+
+[root@lvm system]# ss -tnulp | grep httpd
+tcp    LISTEN     0      128      :::8080   :::*  users:(("httpd",pid=5397,fd=4),("httpd",pid=5396,fd=4),("httpd",pid=5395,fd=4),("httpd",pid=5394,fd=4),("httpd",pid=5393,fd=4),("httpd",pid=5392,fd=4),("httpd",pid=5391,fd=4))
+tcp    LISTEN     0      128      :::80     :::*  users:(("httpd",pid=5211,fd=4),("httpd",pid=5210,fd=4),("httpd",pid=5209,fd=4),("httpd",pid=5208,fd=4),("httpd",pid=5207,fd=4),("httpd",pid
 ```
