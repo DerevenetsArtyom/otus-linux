@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script for demostrating functions in bash
+# Script for demonstrating functions in bash
 
 lines () {
     cat $1 | wc -l

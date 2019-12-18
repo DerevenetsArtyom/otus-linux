@@ -23,5 +23,5 @@ if [[ -d $dir ]]
 then
   echo "There is $dir dir on your system!!!"
 else
-  echo "$dir dir is epsend!"
+  echo "$dir dir is absent!"
 fi

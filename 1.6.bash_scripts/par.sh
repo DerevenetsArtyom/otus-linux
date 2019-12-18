@@ -18,8 +18,8 @@ echo '$1 = '$1
 echo '$# = '$#
 echo '$$ = '$$
 
-
 echo '$? = '$?
-ls /ebc
+
 # Comment next line to see how example works
+ls /ebc
 echo '$? = '$?

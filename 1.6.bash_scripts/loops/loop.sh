@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Script that show how loop works
-# We can loop throug files in dir
+# We can loop through files in dir
+
 files=`ls /var/log/`
 for FILE in $files
 do
