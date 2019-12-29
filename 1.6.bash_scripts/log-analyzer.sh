@@ -4,10 +4,13 @@ lockfile=/tmp/lockfile
  
 function display_help () {
     echo -e "\n#### Help guide ####"
-    echo -e "\nThis Script parse nginx access log and show this information:"
-    echo -e "\nUnique IP count\nTop 10 IP by accessing server\nRequests count by CODE"
+    echo -e "\nThis script parse nginx access log and send mail with following information:\n"
+    echo -e "  Requests count by status code"
+    echo -e "  Top 10 User IP by accessing server"
+    echo -e "  Top 10 URL Address"
+    echo -e "  List with all errors"
     echo -e "\n## How to use it ##"
-    echo -e "\n./log-analiger.sh /path/to/logfile"
+    echo -e "  ./log-analyzer.sh /path/to/logfile"
 }
 
 
@@ -69,7 +72,7 @@ function make_report () {
 }
 
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-## Основное тело скрипта
+## Main script
 ##!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if [[ "$1" = "help" ]] ; then
@@ -77,7 +80,7 @@ if [[ "$1" = "help" ]] ; then
 else
     if [[ -e "$lockfile" ]]; then 
         echo "Failed to acquire lockfile: $lockfile."
-        echo -e "Locked by:\n $(ps aux | grep log-analizer.sh)"
+        echo -e "Locked by:\n $(ps aux | grep log-analyzer.sh)"
     else
         echo 1 > $lockfile
         trap 'rm -f "$lockfile"; exit $?' INT TERM EXIT
@@ -85,9 +88,9 @@ else
         make_report $1
         rm -f "$lockfile"
         trap - INT TERM EXIT
-
     fi
 fi
 
 # echo -e "$report" | mail -s "Report log of [ $date_begin - $date_end ]" root
-#mail -s "Report statistics" "vagrant" < mail_report
+# mail -s "Report statistics" "vagrant" < mail_report
+# mail -s "Stat from nginx server $dt" derevenetsartyom@gmail.com < $OUTPUT
