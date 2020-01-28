@@ -83,7 +83,7 @@ else
         trap 'rm -f "$lockfile"; exit $?' INT TERM EXIT
 
         make_report $1
-        mail -s "Report from nginx server" derevenetsartyom@gmail.com < mail_report
+        mail -s "Report from nginx server" vagrant < mail_report
 
         rm -f "$lockfile"
         trap - INT TERM EXIT
