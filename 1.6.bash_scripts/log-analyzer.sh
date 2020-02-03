@@ -52,7 +52,7 @@ function make_report () {
     done;
     
     echo -e "\nTop 10 User IP by accessing server:" >> mail_report
-    $check_file | awk '{print "    " $1}' | sort -nr | uniq | head >> mail_report
+    $check_file | awk '{print "  " $1}' | sort -nr | uniq -c | sort -rn | head >> mail_report
     echo "" >> mail_report
     
     echo "Top 10 URL Address:" >> mail_report
