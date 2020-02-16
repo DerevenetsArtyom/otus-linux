@@ -1,0 +1,20 @@
+---
+- name: Install and configure NGINX
+  hosts: nginx
+  become: true
+  tasks:
+    - name: Install EPEL Repo package from standart repo
+      yum:
+        name: epel-release
+        state: present
+      tags:
+        - epel-package
+        - packages
+
+    - name: Install NGINX package from epel-repo
+      yum:
+        name: nginx
+        state: latest
+      tags:
+        - nginx-package
+        - packages
