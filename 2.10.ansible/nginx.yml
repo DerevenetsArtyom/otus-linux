@@ -17,6 +17,8 @@
       yum:
         name: nginx
         state: latest
+      notify:
+        - restart nginx
       tags:
         - nginx-package
         - packages
@@ -25,5 +27,19 @@
       template:
         src: templates/nginx.conf.j2
         dest: /etc/nginx/nginx.conf
+      notify:
+        - reload nginx
       tags:
         - nginx-configuration
+
+  handlers:
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes
+    
+    - name: reload nginx
+      systemd:
+        name: nginx
+        state: reloaded
