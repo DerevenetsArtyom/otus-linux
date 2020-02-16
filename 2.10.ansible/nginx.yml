@@ -2,6 +2,8 @@
 - name: Install and configure NGINX
   hosts: nginx
   become: true
+  vars:
+    nginx_listen_port: 8080
   tasks:
     - name: Install EPEL Repo package from standart repo
       yum:
@@ -18,3 +20,10 @@
       tags:
         - nginx-package
         - packages
+
+    - name: Create NGINX config file from template
+      template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      tags:
+        - nginx-configuration
