@@ -1,2 +1,2 @@
 ---
-# defaults file for nginx-role
+nginx_listen_port: 8080
