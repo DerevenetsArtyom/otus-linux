@@ -1,4 +1,4 @@
-# Homework 09. First steps with Ansible
+# Homework #9. Ansible
 
 Prepare a stand on Vagrant with at least one server.  
 On this server, using Ansible, you must deploy `nginx` with the following conditions:
@@ -6,7 +6,8 @@ On this server, using Ansible, you must deploy `nginx` with the following condit
 - the configuration files should be taken from the jinja2 template with the following variables
 - after installation, nginx should be in `enabled` mode (systemd)
 - `notify` should be used to start nginx after installation
-- the site should listen on a non-standard port - 8080, for this use variables in Ansible  
+- the site should listen on a non-standard port - 8080, for this use variables in Ansible
+  
 *To do all this using the Ansible role*
 
 ---
